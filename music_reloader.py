@@ -22,8 +22,7 @@ score_tick = tokenizer.decode([new_tokens])
 print(f"Decoded score type: {type(score_tick)}")
 print(score_tick)
 
-# The ScoreTick object should be converted to a Score object properly
-# Let's try the correct way to create a Score from ScoreTick
+
 try:
     # Create a Score object and copy the data from ScoreTick
     #score = Score()
@@ -34,17 +33,6 @@ try:
     print("Saved generated_output.mid using Score conversion")
 except Exception as e:
     print(f"Error with Score conversion: {e}")
-    # Fallback: create a simple MIDI file manually
-    from miditoolkit import MidiFile, Instrument, Note
-    midi = MidiFile()
-    # Create an instrument
-    instrument = Instrument(program=0, is_drum=False)
-    # Add a simple note to make it non-empty
-    note = Note(velocity=64, pitch=60, start=0, end=1)
-    instrument.notes.append(note)
-    midi.instruments.append(instrument)
-    midi.dump("generated_output.mid")
-    print("Saved minimal generated_output.mid")
 
 
     

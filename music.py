@@ -2,6 +2,7 @@
 
 import os
 import json
+import random
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -22,18 +23,13 @@ def tokenize_midi_folder(midi_folder, output_folder):
             output_path = os.path.join(output_folder, os.path.basename(midi_path) + ".json")
             tokenizer.save_tokens(tokens, output_path)
         except Exception as e:
-            print(f"❌ Error tokenizing {midi_path}: {e}")
+            print(f"Error tokenizing {midi_path}: {e}")
             try:
                 os.remove(midi_path)
-                print(f"🗑️ Deleted problematic file: {midi_path}")
+                print(f"Deleted problematic file: {midi_path}")
             except Exception as delete_error:
-                print(f"⚠️ Failed to delete {midi_path}: {delete_error}")
+                print(f"Failed to delete {midi_path}: {delete_error}")
 # --- Dataset ---
-import os
-import json
-import torch
-from torch.utils.data import Dataset
-import random
 
 class MusicDataset(Dataset):
     def __init__(self, token_folder, seq_len=512, max_files=None):
@@ -162,16 +158,7 @@ def train_model(token_folder, vocab_size=512, epochs=113, batch_size=16, seq_len
 
 # --- Generation ---
 def generate_music(model, start_seq, max_len=1024, temperature=1.0, top_k=50, window=512):
-    """
-    Generate music using the trained model with a fixed context window of 20 tokens.
 
-    Args:
-        model: Trained model
-        start_seq: Starting sequence of tokens
-        max_len: Number of tokens to generate
-        temperature: Controls randomness
-        top_k: Number of top logits to sample from
-    """
     model.eval()
     device = next(model.parameters()).device
     context_window = window
@@ -214,10 +201,3 @@ def generate_music(model, start_seq, max_len=1024, temperature=1.0, top_k=50, wi
             print(f"Generated {i}/{max_len} tokens...")
 
     return seq.squeeze().tolist()
-# Example usage:
-#tokenize_midi_folder("/Users/ritikraman/dev/ai/midi_data", "/Users/ritikraman/dev/ai/tokens")
-#model = train_model("/Users/ritikraman/dev/ai/tokens")
-#new_tokens = generate_music(model, start_seq=[0, 12, 45, 78])
-# (Then convert new_tokens to MIDI with tokenizer.tokens_to_midi(...))
-
-
